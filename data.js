@@ -1,6 +1,8 @@
 /* =========================================================
    data.js — все карточки шпаргалки
-   Категория: { id, emoji, title, sub, items: [{ t, d, code }] }
+   Категория: { id, emoji, title, sub, items: [{ t, d, code, os? }] }
+   os — необязательный массив: ["macOS"], ["Linux"], ["Windows"].
+   Если os не указан, карточка считается универсальной.
    ========================================================= */
 
 const r = String.raw; // сохраняет обратные слэши в коде (регэкспы, \n)
@@ -15,26 +17,34 @@ window.CATEGORIES = [
   sub: "окружение, venv, запуск скрипта",
   items: [
     {
-      t: "Запуск Python из терминала",
-      d: "Terminal открывается через ⌘Space → «Terminal». python3 уже есть в macOS, свежую версию лучше ставить через Homebrew.",
-      code: r`python3 --version            # какая версия установлена
-python3 -c "print(2 ** 10)"
-open .                        # Finder в текущей папке`,
+      t: "Запуск Python в терминале",
+      d: "macOS: ⌘Space → Terminal · Linux: Ctrl+Alt+T · Windows: PowerShell или Windows Terminal. Команды ниже работают везде, где установлен Python 3.",
+      code: r`python3 --version            # macOS / Linux
+py --version                 # Windows: Python Launcher
+python3 -c "print(2 ** 10)"  # однострочный скрипт
+python3 script.py            # запустить файл
+python -i script.py          # файл + интерактив после
+# macOS: open .   |   Linux: xdg-open .
+# Windows: explorer .`,
     },
     {
       t: "Виртуальное окружение (venv)",
-      d: "У каждого проекта — свой pip и свои пакеты. Активация подменяет python в PATH на .venv/bin/python.",
-      code: r`cd ~/Projects/myapp            # папка проекта
-python3 -m venv .venv          # создать окружение
-source .venv/bin/activate      # включить
+      d: "У каждого проекта — свой pip и пакеты. Активация: macOS/Linux — source .venv/bin/activate, Windows CMD — .venv\\Scripts\\activate.bat, PowerShell — .venv\\Scripts\\Activate.ps1.",
+      code: r`cd ~/Projects/myapp            # macOS / Linux
+cd %USERPROFILE%\Projects\myapp  # Windows CMD
+python3 -m venv .venv          # macOS / Linux
+py -m venv .venv               # Windows
+source .venv/bin/activate      # macOS / Linux
+.venv\Scripts\activate.bat     # Windows CMD
 python -m pip install requests # ставить сюда
 pip list                       # что установлено
 deactivate                     # выключить
-rm -rf .venv                   # удалить целиком`,
+rmdir /s /q .venv              # удалить (Windows)
+rm -rf .venv                   # удалить (macOS / Linux)`,
     },
     {
       t: "pip — установка пакетов",
-      d: "Для CLI-утилит удобнее pipx (brew install pipx). Системный Python не трогаем: пакеты ставим в venv или с флагом --user.",
+      d: "Для CLI-утилит удобнее pipx: brew install pipx (macOS), winget install pipx.pipx (Windows), apt/pipx в Linux. Системный Python не трогаем: пакеты ставим в venv.",
       code: r`pip install requests
 pip install "flask>=3.0,<4"
 pip install -U pip
@@ -46,11 +56,14 @@ pip uninstall flask`,
     {
       t: "uv — быстрый менеджер пакетов",
       d: "Замена pip/venv, написанная на Rust: работает в 10–100 раз быстрее.",
-      code: r`brew install uv
-uv venv                        # создать .venv
-source .venv/bin/activate
+      code: r`brew install uv                                    # macOS
+winget install astral-sh.uv                         # Windows
+curl -LsSf https://astral.sh/uv/install.sh | sh     # Linux
+uv venv                                             # создать .venv
+source .venv/bin/activate                           # macOS / Linux
+.venv\Scripts\activate.bat                          # Windows CMD
 uv pip install requests
-uvx ruff check .               # CLI-утилита без установки`,
+uvx ruff check .                                    # CLI без установки`,
     },
     {
       t: "uv как менеджер проекта",
@@ -65,7 +78,9 @@ uv sync                       # поставить всё из uv.lock`,
     {
       t: "Poetry — классический менеджер проектов",
       d: "Управляет зависимостями, окружениями и публикацией пакета.",
-      code: r`brew install poetry
+      code: r`brew install poetry                       # macOS
+winget install PythonSoftwareFoundation.Poetry  # Windows
+# Linux: curl -sSL https://install.python-poetry.org | python3 -
 poetry new myapp
 poetry add requests
 poetry run python main.py
@@ -73,26 +88,38 @@ poetry env use python3.12`,
     },
     {
       t: "Свой исполняемый скрипт (shebang)",
-      d: "Чтобы запускать как ./script.py, без python3 перед именем. Первая строка файла — shebang.",
+      d: "В macOS/Linux shebang позволяет запускать ./script.py. В Windows работает py script.py или ассоциация .py; shebang учитывается в WSL/Git Bash.",
       code: r`#!/usr/bin/env python3
-# первая строка файла
+# первая строка файла (только для macOS / Linux)
 
 import sys
 
-print("Привет, macOS!")
-print(sys.executable)         # какой питон используется`,
+print("Привет!")
+print(sys.executable)         # какой интерпретатор используется
+
+# macOS / Linux:  chmod +x script.py && ./script.py
+# Windows:        py script.py`,
     },
     {
-      t: "chmod и .command (двойной щелчок)",
-      d: "chmod делает файл исполняемым; файл с расширением .command macOS открывает в Terminal двойным щелчком.",
-      code: r`chmod +x script.py
-./script.py
+      t: "Скрипт двойным щелчком: .command / .bat",
+      d: "Полезно для быстрого запуска без терминала. Примеры ниже для macOS/Linux и Windows.",
+      os: ["macOS", "Linux", "Windows"],
+      code: r`# macOS / Linux: script.sh или run.command
+chmod +x run.command
+./run.command
 
 # содержимое run.command:
 #!/bin/zsh
 cd "$(dirname "$0")"
 source .venv/bin/activate
-python3 main.py`,
+python3 main.py
+
+# Windows: run.bat
+@echo off
+cd /d "%~dp0"
+call .venv\Scripts\activate.bat
+py main.py
+pause`,
     },
   ],
 },
@@ -174,7 +201,7 @@ breakpoint()          # вход в pdb внутри кода`,
     {
       t: "Переменные и базовые типы",
       d: "Присвоение «имя = значение». Аннотация через двоеточие ничего не проверяет, пишет только читаемость.",
-      code: r`name = "macOS"        # str    строка
+      code: r`name = "Python"       # str    строка
 version = 3.12        # float  дробное
 major = 3             # int    целое
 running = True        # bool   True / False
@@ -296,7 +323,7 @@ s.count("l")          # сколько раз
     {
       t: "Срезы строк s[a:b]",
       d: "Индексы с нуля, отрицательные — с конца. Формат [старт:стоп:шаг], стоп не включается.",
-      code: r`s = "macOS"
+      code: r`s = "Python"
 s[0]        # 'm'
 s[-1]       # 'S'
 s[2:5]      # 'cOS'
@@ -309,7 +336,7 @@ s.rstrip("OS")   # 'mac'`,
     {
       t: "Сырые и многострочные строки",
       d: "r перед кавычкой отменяет спец-символы — путь или регэксп записываются дословно.",
-      code: r`path = r"C:\Users\Mac\notes"  # без \n и \\
+      code: r`path = r"C:\Users\User\notes"  # без \n и \\
 regex = r"\d{3}-\d{6}"
 
 text = """многострочный
@@ -630,7 +657,7 @@ add(1, 2)   # сначала напечатает «→ вызов add»`,
 },
     {
       t: "Декоратор с functools.wraps",
-      d: "wraps сохраняет имя/докстринг оригинала; без декоратор теряет внешние атрибуты.",
+      d: "wraps сохраняет имя и докстринг оригинала; без него обёртка теряет эти атрибуты.",
       code: r`import functools, time
 
 def timer(func):
@@ -1496,16 +1523,160 @@ secrets.randbits(64)        # случайное число`,
   ],
 },
 
-/* =================== macOS ИНТЕГРАЦИЯ =================== */
+/* ============== КРОСС-ПЛАТФОРМЕННОСТЬ ============== */
 {
-  id: "macos",
-  emoji: "🍎",
-  title: "macOS интеграция",
-  sub: "pbcopy · open · osascript · Tkinter",
+  id: "crossplatform",
+  emoji: "🌍",
+  title: "Кросс-платформенно",
+  sub: "один код для macOS · Linux · Windows",
   items: [
     {
-      t: "pbcopy / pbpaste — буфер обмена",
-      d: "Быстрая работа с clipboard macOS.",
+      t: "Определить ОС из Python",
+      d: "platform.system() и sys.platform — базовый способ подстроить поведение под систему.",
+      code: r`import platform, sys
+
+print(platform.system())   # 'Darwin' | 'Linux' | 'Windows'
+print(sys.platform)        # 'darwin' | 'linux' | 'win32'
+print(platform.machine())  # 'x86_64' | 'arm64' | 'AMD64'
+
+sep = "\\" if sys.platform == "win32" else "/"
+print("разделитель:", sep)`,
+    },
+    {
+      t: "Активация venv на всех ОС",
+      d: "Один и тот же .venv активируется по-разному. После активации везде работают команды python и pip.",
+      code: r`# macOS / Linux (bash, zsh)
+source .venv/bin/activate
+
+# Windows CMD
+.venv\Scripts\activate.bat
+
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+# если ругается политика: Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+# выключить окружение — одинаково везде
+deactivate`,
+    },
+    {
+      t: "Пути без '/' и '\\': pathlib",
+      d: "Path из pathlib собирает путь «под текущую ОС». as_posix() нужен для URL и конфигов.",
+      code: r`from pathlib import Path, PurePath
+
+data = Path.home() / "projects" / "app" / "data.txt"
+print(data)                        # /Users/... или C:\Users\...
+print(PurePath("a", "b", "c.txt"))  # a/b/c.txt или a\b\c.txt
+print(data.as_posix())             # всегда прямой слэш
+data.parent.mkdir(parents=True, exist_ok=True)
+print(data.name, data.stem, data.suffix)`,
+    },
+    {
+      t: "Переменные окружения",
+      d: "В Python — os.environ. В терминале синтаксис отличается: export, setx или $env:.",
+      code: r`import os
+
+token = os.environ.get("API_TOKEN", "")   # без KeyError
+os.environ["DEBUG"] = "1"                 # только в этом процессе
+print(os.getenv("HOME") or os.getenv("USERPROFILE"))
+
+# macOS / Linux:  export API_TOKEN=abc
+# Windows CMD:    setx API_TOKEN abc
+# PowerShell:     $env:API_TOKEN = "abc"`,
+    },
+    {
+      t: "Буфер обмена: pyperclip",
+      d: "Один API для macOS, Linux и Windows. Ставится в venv: python -m pip install pyperclip.",
+      code: r`# python -m pip install pyperclip
+import pyperclip
+
+pyperclip.copy("Кроссплатформенный текст")
+print(pyperclip.paste())
+
+# без зависимостей — встроенный tkinter
+import tkinter as tk
+root = tk.Tk()
+root.withdraw()
+root.clipboard_clear()
+root.clipboard_append("ещё один вариант")
+root.update()`,
+    },
+    {
+      t: "Открыть файл или сайт системной программой",
+      d: "webbrowser.open работает везде. Для файлов: open — macOS, xdg-open — Linux, os.startfile — Windows.",
+      code: r`import os, platform, subprocess, webbrowser
+
+webbrowser.open("https://python.org")     # браузер по умолчанию
+
+def show(path):
+    system = platform.system()
+    if system == "Darwin":
+        subprocess.run(["open", path], check=False)
+    elif system == "Linux":
+        subprocess.run(["xdg-open", path], check=False)
+    else:
+        os.startfile(path)                # только Windows
+
+show("report.pdf")`,
+    },
+    {
+      t: "Уведомления без привязки к ОС",
+      d: "Пакет plyer даёт один вызов для десктопных уведомлений на трёх системах.",
+      code: r`# python -m pip install plyer
+from plyer import notification
+
+notification.notify(
+    title="Python",
+    message="Задача выполнена",
+    timeout=5,
+)
+
+# macOS без пакета:
+# subprocess.run(["osascript", "-e",
+#   'display notification "Готово" with title "Python"'])`,
+    },
+    {
+      t: "Внешние команды кроссплатформенно",
+      d: "subprocess со списком аргументов и sys.executable одинаково работает на всех ОС. shell=True — только при крайней нужде.",
+      code: r`import subprocess, sys
+
+subprocess.run([sys.executable, "--version"], check=True)
+result = subprocess.run(
+    [sys.executable, "-c", "print('ok')"],
+    capture_output=True, text=True, check=True,
+)
+print(result.stdout.strip())   # ok
+
+# danger: subprocess.run("ls | grep py", shell=True)`,
+    },
+    {
+      t: "Кодировка и переводы строк",
+      d: "Явно указывайте encoding=\"utf-8\" и newline=\"\" — CSV и тексты одинаково читаются на Windows, macOS и Linux.",
+      code: r`from pathlib import Path
+
+Path("note.txt").write_text("Привет\nМир", encoding="utf-8")
+text = Path("note.txt").read_text(encoding="utf-8")
+print(text)
+
+import csv
+with open("data.csv", "w", newline="", encoding="utf-8") as f:
+    csv.writer(f).writerow(["/a", "b"])
+
+# Windows сохраняет CRLF, macOS/Linux — LF; Python приведёт к \n`,
+    },
+  ]
+},
+
+/* =============== СИСТЕМЫ И ИНТЕГРАЦИЯ =============== */
+{
+  id: "macos",
+  emoji: "🖥",
+  title: "Системы и интеграция",
+  sub: "системные вызовы: macOS · Linux · Windows",
+  items: [
+    {
+      t: "pbcopy / pbpaste — буфер macOS",
+      d: "Быстрая работа с clipboard через системные команды.",
+      os: ["macOS"],
       code: r`import subprocess
 
 subprocess.run(["pbcopy"], input="скопировано!".encode())
@@ -1516,8 +1687,39 @@ text = subprocess.run(
 print(text)`,
     },
     {
-      t: "open — Finder и приложения",
+      t: "wl-copy / xclip — буфер Linux",
+      d: "Wayland — wl-copy/wl-paste, X11 — xclip/xsel. Зависимости ставятся менеджером пакетов.",
+      os: ["Linux"],
+      code: r`# sudo apt install wl-clipboard   (Wayland)
+# sudo apt install xclip           (X11)
+import subprocess
+
+subprocess.run(["wl-copy"], input="текст".encode())
+text = subprocess.run(["wl-paste"], capture_output=True, text=True).stdout
+print(text)
+
+# X11: subprocess.run(["xclip", "-selection", "clipboard"], input=b"текст")`,
+    },
+    {
+      t: "clip.exe и PowerShell — буфер Windows",
+      d: "Классический clip.exe из CMD или PowerShell-командлет Set-Clipboard/Get-Clipboard.",
+      os: ["Windows"],
+      code: r`import subprocess
+
+subprocess.run(["clip"], input="текст".encode("utf-16le"))
+
+text = subprocess.run(
+    ["powershell", "-NoProfile", "-Command", "Get-Clipboard"],
+    capture_output=True, text=True,
+).stdout
+print(text)
+
+# PowerShell: "текст" | Set-Clipboard`,
+    },
+    {
+      t: "open — Finder и приложения macOS",
       d: "То же, что двойной щелчок; -R показывает файл в Finder.",
+      os: ["macOS"],
       code: r`import subprocess
 
 subprocess.run(["open", "report.pdf"])
@@ -1527,8 +1729,31 @@ subprocess.run(["open", "-a", "Terminal", "."])
 subprocess.run(["open", "https://example.com"])`,
     },
     {
-      t: "Уведомления, say и beep",
-      d: "Скрипт сообщает о завершении — через встроенные возможности macOS.",
+      t: "xdg-open — открыть файл в Linux",
+      d: "Универсальный вызов «открыть как двойным щелчком» в большинстве дистрибутивов.",
+      os: ["Linux"],
+      code: r`import subprocess
+
+subprocess.run(["xdg-open", "report.pdf"], check=False)
+subprocess.run(["xdg-open", "."], check=False)
+subprocess.run(["xdg-open", "https://python.org"], check=False)`,
+    },
+    {
+      t: "explorer / start — открыть в Windows",
+      d: "Проводник и ассоциации файлов из CMD или PowerShell.",
+      os: ["Windows"],
+      code: r`import os, subprocess
+
+subprocess.run(["explorer", "report.pdf"], check=False)
+subprocess.run(["explorer", "."], check=False)
+subprocess.run(["start", "", "https://python.org"], shell=True, check=False)
+
+# PowerShell: Start-Process report.pdf`,
+    },
+    {
+      t: "Уведомления, say и beep macOS",
+      d: "Скрипт сообщает о завершении через встроенные возможности macOS.",
+      os: ["macOS"],
       code: r`import subprocess
 
 msg = 'display notification "Готово!" with title "Python"'
@@ -1538,13 +1763,26 @@ subprocess.run(["say", "все готово"])
 subprocess.run(["osascript", "-e", "beep"])`,
     },
     {
+      t: "notify-send — уведомления Linux",
+      d: "Работает в большинстве графических окружений через libnotify.",
+      os: ["Linux"],
+      code: r`# sudo apt install libnotify-bin
+import subprocess
+
+subprocess.run(
+    ["notify-send", "Python", "Задача выполнена", "-t", "5000"],
+    check=False,
+)`,
+    },
+    {
       t: "Tkinter — минимальный GUI",
-      d: "Tkinter входит в поставку python.org; у Homebrew нужен доп. пакет python-tk.",
+      d: "Tkinter входит в поставку python.org на всех ОС; в Linux и Homebrew может понадобиться отдельный пакет python-tk.",
+      os: ["macOS", "Linux", "Windows"],
       code: r`import tkinter as tk
 from tkinter import ttk
 
 root = tk.Tk()
-root.title("macOS app")
+root.title("Python app")
 root.geometry("300x200+200+200")
 
 ttk.Label(root, text="Привет!").pack(padx=20, pady=10)
@@ -1552,23 +1790,26 @@ ttk.Button(root, text="OK", command=root.destroy).pack()
 root.mainloop()`,
     },
     {
-      t: "PyInstaller — скрипт → .app",
-      d: "Распространение приложения без python в системе.",
-      code: r`python3 -m pip install pyinstaller
+      t: "PyInstaller — скрипт → .app / .exe",
+      d: "Собирает автономное приложение без установленного Python: .app на macOS, .exe на Windows, исполняемый файл в Linux.",
+      os: ["macOS", "Linux", "Windows"],
+      code: r`python -m pip install pyinstaller
 pyinstaller --onefile --name="MyApp" main.py
-pyinstaller --onefile --windowed --icon=icon.icns main.py
 
+# macOS: --windowed --icon=icon.icns
+# Windows: --windowed --icon=icon.ico
 # результат: папка dist/ и файл MyApp.spec`,
     },
     {
       t: "pyautogui — автоматизация кликов",
-      d: "Сторонний пакет: клики, нажатия, скриншоты на macOS. Нужны разрешения в «Защита и безопасность».",
+      d: "Клики, нажатия и скриншоты на всех ОС. macOS требует разрешений в «Защита и безопасность», Linux — X11/Wayland-зависимостей.",
+      os: ["macOS", "Linux", "Windows"],
       code: r`# uv add pyautogui    (или pip install pyautogui)
 import pyautogui
 
 pyautogui.size()
 pyautogui.click(x=100, y=200)
-pyautogui.typewrite("hello macos", interval=0.1)
+pyautogui.typewrite("hello", interval=0.1)
 pyautogui.screenshot("shot.png")`,
     },
   ],

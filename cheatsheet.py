@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-Python Шпаргалка — лаунчер для macOS.
-Запускает локальный сервер и открывает шпаргалку в браузере.
+Python Шпаргалка — необязательный локальный лаунчер.
 
-    python3 cheatsheet.py            # сервер + браузер
+Сайт полностью статический и работает без этого файла: можно просто открыть
+index.html или включить GitHub Pages. Лаунчер лишь поднимает локальный сервер
+и открывает браузер.
+
+    python3 cheatsheet.py            # macOS / Linux: сервер + браузер
+    py cheatsheet.py                 # Windows: сервер + браузер
     python3 cheatsheet.py --port 8080
     python3 cheatsheet.py --static   # просто открыть файл без сервера
 """
