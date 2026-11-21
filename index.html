@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Шпаргалка — macOS</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="logo">🐍</div>
+      <div class="brand-text">
+        <h1>Python Шпаргалка</h1>
+        <span class="sub">macOS · <span id="stats"></span></span>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Поиск по шпаргалке…" autocomplete="off" spellcheck="false">
+      <kbd>⌘K</kbd>
+    </div>
+    <div class="top-actions">
+      <button id="favToggle" class="icon-btn" title="Показать только избранное" aria-label="Избранное">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+      </button>
+      <button id="themeToggle" class="icon-btn" title="Светлая/тёмная тема" aria-label="Тема">
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <button class="nav-item active" data-filter="all">
+      <span class="nav-icon">📖</span><span class="nav-label">Все</span><span class="nav-count" id="countAll"></span>
+    </button>
+    <button class="nav-item" data-filter="fav">
+      <span class="nav-icon">⭐</span><span class="nav-label">Избранное</span><span class="nav-count" id="countFav">0</span>
+    </button>
+    <div class="nav-sep"></div>
+    <div id="navList"></div>
+  </nav>
+
+  <main class="content" id="content">
+    <div id="results"></div>
+    <div class="empty" id="empty" hidden>
+      <div class="empty-icon">🔍</div>
+      <p class="empty-title">Ничего не найдено</p>
+      <p class="empty-sub">Попробуйте другой запрос — ищем по заголовкам, описаниям и коду.</p>
+    </div>
+    <footer class="footer">
+      <p>🐍 Python Шпаргалка для macOS · работает офлайн · избранное хранится локально</p>
+      <p class="footer-tip">Поиск — ⌘K, очистить — Esc. Скопировать код — кнопка «Copy» на карточке.</p>
+    </footer>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
