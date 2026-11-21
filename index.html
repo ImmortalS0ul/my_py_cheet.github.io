@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Кросс-платформенная шпаргалка по Python: macOS, Linux, Windows. Поиск, избранное, темы, копирование кода, печать и экспорт.">
+<meta name="description" content="Универсальная шпаргалка по Python: поиск, избранное, темы, копирование кода, печать и экспорт.">
 <meta name="theme-color" content="#f5f5f7">
-<title>Python Шпаргалка — macOS · Linux · Windows</title>
+<title>Python Шпаргалка — универсальная</title>
 <link rel="stylesheet" href="style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
 </head>
@@ -19,7 +19,7 @@
       <div class="logo">🐍</div>
       <div class="brand-text">
         <h1>Python Шпаргалка</h1>
-        <span class="sub"><span id="stats"></span> · <span class="platforms">macOS · Linux · Windows</span></span>
+        <span class="sub"><span id="stats"></span></span>
       </div>
     </div>
 
@@ -47,22 +47,22 @@
   </div>
 
   <div class="toolbar">
-    <div class="os-filter" id="osFilters" role="group" aria-label="Фильтр по операционной системе">
-      <span class="toolbar-label">ОС:</span>
-      <button class="chip active" data-os="all" type="button">Все</button>
+    <div class="os-filter" id="osFilters" role="group" aria-label="Фильтр по платформе">
+      <span class="toolbar-label">Фильтр:</span>
+      <button class="chip active" data-os="all" type="button">Без фильтра</button>
       <button class="chip" data-os="my" id="myOsChip" type="button">Моя ОС</button>
       <button class="chip" data-os="macOS" type="button">macOS</button>
       <button class="chip" data-os="Linux" type="button">Linux</button>
       <button class="chip" data-os="Windows" type="button">Windows</button>
     </div>
-    <div class="toolbar-hint" id="osHint">Показаны все карточки</div>
+    <div class="toolbar-hint" id="osHint">Без фильтра</div>
   </div>
 </header>
 
 <div class="layout">
   <nav class="sidebar" id="sidebar" aria-label="Разделы шпаргалки">
     <button class="nav-item active" data-filter="all" type="button">
-      <span class="nav-icon">📖</span><span class="nav-label">Все</span><span class="nav-count" id="countAll"></span>
+      <span class="nav-icon">📖</span><span class="nav-label">Все разделы</span><span class="nav-count" id="countAll"></span>
     </button>
     <button class="nav-item" data-filter="fav" type="button">
       <span class="nav-icon">⭐</span><span class="nav-label">Избранное</span><span class="nav-count" id="countFav">0</span>
@@ -82,8 +82,12 @@
     </div>
 
     <footer class="footer">
-      <p>🐍 Python Шпаргалка · macOS · Linux · Windows · работает офлайн</p>
-      <p class="footer-tip"><span id="footerShortcut">⌘K</span> — поиск · Esc — очистить · кнопки в шапке — печать и экспорт</p>
+      <p>🐍 Python Шпаргалка · работает офлайн</p>
+      <p class="footer-tip"><span id="footerShortcut">⌘K</span> — поиск · Esc — очистить</p>
+      <p class="footer-actions">
+        <button class="footer-action" id="footerPrint" type="button">Печать / PDF</button>
+        <button class="footer-action" id="footerExport" type="button">Экспорт Markdown</button>
+      </p>
       <p class="footer-link"><a href="https://github.com/ImmortalS0ul/my_py_cheet.github.io" target="_blank" rel="noopener noreferrer">GitHub</a> · избранное и тема хранятся только в вашем браузере</p>
     </footer>
   </main>

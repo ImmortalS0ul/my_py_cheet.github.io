@@ -1528,7 +1528,7 @@ secrets.randbits(64)        # случайное число`,
   id: "crossplatform",
   emoji: "🌍",
   title: "Кросс-платформенно",
-  sub: "один код для macOS · Linux · Windows",
+  sub: "один код для разных систем",
   items: [
     {
       t: "Определить ОС из Python",
@@ -1671,7 +1671,7 @@ with open("data.csv", "w", newline="", encoding="utf-8") as f:
   id: "macos",
   emoji: "🖥",
   title: "Системы и интеграция",
-  sub: "системные вызовы: macOS · Linux · Windows",
+  sub: "системные вызовы и интеграции",
   items: [
     {
       t: "pbcopy / pbpaste — буфер macOS",

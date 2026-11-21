@@ -73,7 +73,7 @@ function matchesOS(item) {
 
 function osBadges(item) {
   if (!item.os || item.os.length >= ALL_OS.length) {
-    return `<span class="os-badge universal">🌐 Все ОС</span>`;
+    return `<span class="os-badge universal" title="Универсально">🌐</span>`;
   }
   return item.os.map(os =>
     `<span class="os-badge os-${os.toLowerCase()}">${OS_ICON[os]} ${os}</span>`
@@ -256,7 +256,7 @@ function selectFilter(id) {
     const el = document.getElementById(`cat-${id}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
-  if (window.innerWidth <= 1000) {
+  if (window.innerWidth > 760 && window.innerWidth <= 1000) {
     const activeBtn = $(".sidebar .nav-item.active");
     if (activeBtn) activeBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   }
@@ -281,8 +281,8 @@ function updateOSUI() {
 
   const os = activeOS();
   const hint = os === "all"
-    ? "Показаны все карточки"
-    : `Универсальные карточки + ${os}`;
+    ? "Без фильтра"
+    : `Универсальные + ${os}`;
   $("#osHint").textContent = hint;
 
   const keyLabel = isMac ? "⌘K" : "Ctrl+K";
@@ -463,6 +463,8 @@ function bindEvents() {
   $("#themeToggle").addEventListener("click", toggleTheme);
   $("#printBtn").addEventListener("click", () => window.print());
   $("#exportBtn").addEventListener("click", exportMarkdown);
+  $("#footerPrint").addEventListener("click", () => window.print());
+  $("#footerExport").addEventListener("click", exportMarkdown);
   $("#emptyReset").addEventListener("click", resetFilters);
 
   $("#osFilters").addEventListener("click", e => {
