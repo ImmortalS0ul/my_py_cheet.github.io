@@ -23,7 +23,7 @@
   --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.18);
   --radius: 14px;
   --mark: rgba(255, 214, 0, 0.45);
-  --header-offset: 116px;
+  --header-offset: 74px;
 }
 
 html[data-theme="dark"] {
@@ -200,68 +200,6 @@ body {
 html[data-theme="dark"] .icon-moon { display: block; }
 html[data-theme="dark"] .icon-sun { display: none; }
 
-/* ---------- OS toolbar ---------- */
-
-.toolbar {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 20px 10px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-height: 42px;
-}
-
-.os-filter {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  min-width: 0;
-}
-.os-filter::-webkit-scrollbar { display: none; }
-
-.toolbar-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-2);
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  flex-shrink: 0;
-}
-
-.chip {
-  min-height: 30px;
-  padding: 4px 12px;
-  border: 1px solid var(--card-border);
-  border-radius: 999px;
-  background: var(--card);
-  color: var(--text-2);
-  font: inherit;
-  font-size: 12px;
-  white-space: nowrap;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all .15s;
-}
-.chip:hover { color: var(--text); border-color: var(--accent); }
-.chip.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  font-weight: 600;
-}
-
-.toolbar-hint {
-  margin-left: auto;
-  font-size: 11.5px;
-  color: var(--text-2);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
 /* ---------- Layout ---------- */
 
 .layout {
@@ -369,27 +307,6 @@ html[data-theme="dark"] .icon-sun { display: none; }
 .card-heading { flex: 1; min-width: 0; }
 .card-title { font-size: 14.5px; font-weight: 600; letter-spacing: -0.2px; }
 
-.os-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 5px;
-}
-.os-badge {
-  font-size: 10px;
-  line-height: 1.4;
-  padding: 1px 7px;
-  border-radius: 999px;
-  border: 1px solid var(--card-border);
-  background: var(--bg);
-  color: var(--text-2);
-  white-space: nowrap;
-}
-.os-badge.universal { color: var(--accent); border-color: var(--accent-soft); background: var(--accent-soft); }
-.os-badge.os-windows { color: #0a84ff; }
-.os-badge.os-linux { color: #d69e2e; }
-.os-badge.os-macos { color: #8e8e93; }
-
 .star-btn {
   border: none;
   background: none;
@@ -412,6 +329,44 @@ html[data-theme="dark"] .icon-sun { display: none; }
   padding: 0 14px 10px;
   font-size: 12.5px;
   color: var(--text-2);
+}
+
+.card-theory,
+.card-terms {
+  margin: 0 14px 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+}
+.card-theory h4,
+.card-terms h4 {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+.card-theory p {
+  font-size: 12.2px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.card-terms dl { display: flex; flex-direction: column; gap: 7px; }
+.term-row { display: grid; gap: 1px; }
+.term-row dt {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text);
+}
+.term-row dd {
+  font-size: 11.8px;
+  line-height: 1.45;
+  color: var(--text-2);
+  padding-left: 10px;
+  border-left: 2px solid var(--accent-soft);
 }
 
 .code-wrap {
@@ -528,7 +483,6 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2
 
 @media (max-width: 1100px) {
   .cards { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-  .toolbar-hint { display: none; }
 }
 
 @media (max-width: 1000px) {
@@ -575,9 +529,6 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2
   .top-actions #exportBtn { display: none; }
   .search-wrap kbd { display: none; }
 
-  .toolbar { padding: 0 14px 10px; min-height: 40px; }
-  .toolbar-label { display: none; }
-
   .layout { flex-direction: column; padding: 12px 14px 32px; gap: 10px; }
   .sidebar {
     position: static;
@@ -603,8 +554,8 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2
   .card { border-radius: 12px; }
   .card-head { padding: 11px 12px 4px; }
   .card-desc { padding: 0 12px 10px; }
-  .os-badges { margin-top: 4px; }
-  .os-badge { padding: 1px 6px; }
+  .card-theory,
+  .card-terms { margin-left: 12px; margin-right: 12px; }
 
   .copy-btn {
     width: 30px;
@@ -622,7 +573,6 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2
 
 @media (max-width: 420px) {
   .topbar-inner { padding-left: 12px; padding-right: 12px; }
-  .toolbar { padding-left: 12px; padding-right: 12px; }
   .layout { padding-left: 12px; padding-right: 12px; }
   .brand-text h1 { font-size: 14px; }
   .brand-text .sub { font-size: 10px; }
@@ -630,7 +580,6 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2
   .icon-btn { width: 34px; height: 34px; }
   .top-actions { gap: 4px; }
   .card-title { font-size: 14px; }
-  .os-badge { font-size: 9.5px; }
   pre { font-size: 11.5px; padding-right: 44px; }
 }
 
@@ -669,6 +618,15 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2
     page-break-inside: avoid;
   }
   .card-head, .card-desc { padding-left: 10px; padding-right: 10px; }
+  .card-theory, .card-terms {
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 7px 9px;
+    background: #f6f6f8;
+    border-color: #ddd;
+  }
+  .card-theory p, .term-row dt, .term-row dd { color: #222; }
+  .term-row dd { border-left-color: #ccc; }
   .code-wrap { background: #f6f6f8 !important; border-top: 1px solid #ddd; }
   pre {
     padding: 8px 10px;
@@ -679,8 +637,6 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2
     word-break: break-word;
     overflow: visible;
   }
-  .os-badge { color: #444; border-color: #ccc; background: #f2f2f4; }
-  .os-badge.universal { color: #333; background: #f2f2f4; border-color: #ccc; }
   mark { background: #ffe27a !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .footer { margin-top: 18px; padding-top: 8px; }
   .footer p { font-size: 9px; }

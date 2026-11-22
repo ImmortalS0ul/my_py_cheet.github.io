@@ -26,7 +26,7 @@
     <div class="search-wrap">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       <input id="search" type="search" placeholder="Поиск по шпаргалке…" autocomplete="off" spellcheck="false" aria-label="Поиск по шпаргалке">
-      <kbd id="shortcut">⌘K</kbd>
+      <kbd id="shortcut">Ctrl/⌘K</kbd>
     </div>
 
     <div class="top-actions">
@@ -44,18 +44,6 @@
         <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
     </div>
-  </div>
-
-  <div class="toolbar">
-    <div class="os-filter" id="osFilters" role="group" aria-label="Фильтр по платформе">
-      <span class="toolbar-label">Фильтр:</span>
-      <button class="chip active" data-os="all" type="button">Без фильтра</button>
-      <button class="chip" data-os="my" id="myOsChip" type="button">Моя ОС</button>
-      <button class="chip" data-os="macOS" type="button">macOS</button>
-      <button class="chip" data-os="Linux" type="button">Linux</button>
-      <button class="chip" data-os="Windows" type="button">Windows</button>
-    </div>
-    <div class="toolbar-hint" id="osHint">Без фильтра</div>
   </div>
 </header>
 
@@ -77,13 +65,13 @@
     <div class="empty" id="empty" hidden>
       <div class="empty-icon">🔍</div>
       <p class="empty-title">Ничего не найдено</p>
-      <p class="empty-sub">Попробуйте другой запрос или сбросьте фильтры — ищем по заголовкам, описаниям и коду.</p>
+      <p class="empty-sub">Попробуйте другой запрос или сбросьте фильтры — ищем по заголовкам, описаниям, теории, терминам и коду.</p>
       <button class="reset-btn" id="emptyReset" type="button">Сбросить фильтры</button>
     </div>
 
     <footer class="footer">
       <p>🐍 Python Шпаргалка · работает офлайн</p>
-      <p class="footer-tip"><span id="footerShortcut">⌘K</span> — поиск · Esc — очистить</p>
+      <p class="footer-tip"><span id="footerShortcut">Ctrl/⌘K</span> — поиск · Esc — очистить</p>
       <p class="footer-actions">
         <button class="footer-action" id="footerPrint" type="button">Печать / PDF</button>
         <button class="footer-action" id="footerExport" type="button">Экспорт Markdown</button>

@@ -1,12 +1,9 @@
 /* =========================================================
-   app.js — поиск, фильтры, избранное, темы, печать и экспорт
+   app.js — поиск, избранное, темы, печать и экспорт
    ========================================================= */
 
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
-
-const ALL_OS = ["macOS", "Linux", "Windows"];
-const OS_ICON = { macOS: "🍏", Linux: "🐧", Windows: "⊞" };
 
 const store = {
   get(key, fallback = null) {
@@ -26,19 +23,6 @@ const store = {
   }
 };
 
-function detectOS() {
-  const data = (navigator.userAgentData && navigator.userAgentData.platform) || "";
-  const raw = `${data} ${navigator.platform || ""} ${navigator.userAgent || ""}`;
-  if (/win/i.test(raw)) return "Windows";
-  if (/mac|iphone|ipad|ipod/i.test(raw)) return "macOS";
-  if (/linux|x11|android/i.test(raw)) return "Linux";
-  return null;
-}
-
-const detectedOS = detectOS();
-const isMac = detectedOS === "macOS";
-
-const savedOS = store.get("pycheat:os", "all");
 let favs = [];
 try {
   const parsed = JSON.parse(store.get("pycheat:favs", "[]"));
@@ -52,33 +36,11 @@ const savedTheme = store.get("pycheat:theme", null);
 const state = {
   query: "",
   filter: "all",                 // all | fav | id категории
-  os: ["all", "my", ...ALL_OS].includes(savedOS) ? savedOS : "all",
   favs: new Set(favs),
-  theme: ["light", "dark"].includes(savedTheme) ? savedTheme : null,
-  detectedOS
+  theme: ["light", "dark"].includes(savedTheme) ? savedTheme : null
 };
 
 /* ---------- Утилиты ---------- */
-
-function activeOS() {
-  if (state.os === "my") return state.detectedOS || "all";
-  return state.os;
-}
-
-function matchesOS(item) {
-  const os = activeOS();
-  if (os === "all" || !item.os || !item.os.length) return true;
-  return item.os.includes(os);
-}
-
-function osBadges(item) {
-  if (!item.os || item.os.length >= ALL_OS.length) {
-    return `<span class="os-badge universal" title="Универсально">🌐</span>`;
-  }
-  return item.os.map(os =>
-    `<span class="os-badge os-${os.toLowerCase()}">${OS_ICON[os]} ${os}</span>`
-  ).join("");
-}
 
 function escapeHtml(s) {
   return String(s)
@@ -105,15 +67,21 @@ function itemKey(cat, item) {
   return `${cat.id}::${item.t}`;
 }
 
+function termText(term) {
+  return `${term.term || ""} ${term.def || ""}`;
+}
+
 function matchQuery(item, cat, q) {
   if (!q) return true;
+  const terms = Array.isArray(item.terms) ? item.terms.map(termText).join(" ") : "";
   const hay = [
     item.t,
     item.d || "",
+    item.theory || "",
+    terms,
     item.code,
     cat.title,
-    cat.sub || "",
-    (item.os || []).join(" ")
+    cat.sub || ""
   ].join(" ").toLowerCase();
   return q.toLowerCase().split(/\s+/).filter(Boolean).every(t => hay.includes(t));
 }
@@ -122,7 +90,6 @@ function visibleItems(cat, { ignoreFav = false } = {}) {
   const q = state.query.trim();
   return cat.items.filter(item => {
     if (!ignoreFav && state.filter === "fav" && !state.favs.has(itemKey(cat, item))) return false;
-    if (!matchesOS(item)) return false;
     if (!matchQuery(item, cat, q)) return false;
     return true;
   });
@@ -180,20 +147,26 @@ function updateSidebarCounts() {
 function cardHTML(item, cat, q) {
   const key = itemKey(cat, item);
   const fav = state.favs.has(key);
-  let title = escapeHtml(item.t);
-  let desc = escapeHtml(item.d || "");
-  if (q) {
-    title = highlight(title, q);
-    desc = highlight(desc, q);
-  }
-  const code = escapeHtml(item.code);
+  const mark = (s) => q ? highlight(escapeHtml(s || ""), q) : escapeHtml(s || "");
+
+  const theoryHTML = item.theory
+    ? `<section class="card-theory"><h4>Теория</h4><p>${mark(item.theory)}</p></section>`
+    : "";
+
+  const terms = Array.isArray(item.terms) ? item.terms : [];
+  const termsHTML = terms.length
+    ? `<section class="card-terms"><h4>Термины</h4><dl>${terms.map(t => `
+        <div class="term-row">
+          <dt>${mark(t.term)}</dt>
+          <dd>${mark(t.def)}</dd>
+        </div>`).join("")}</dl></section>`
+    : "";
 
   return `
     <article class="card" data-key="${escapeHtml(key)}">
       <div class="card-head">
         <div class="card-heading">
-          <h3 class="card-title">${title}</h3>
-          <div class="os-badges">${osBadges(item)}</div>
+          <h3 class="card-title">${mark(item.t)}</h3>
         </div>
         <button class="star-btn ${fav ? "on" : ""}" data-star type="button"
                 aria-label="${fav ? "Убрать из избранного" : "В избранное"}"
@@ -201,13 +174,15 @@ function cardHTML(item, cat, q) {
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
         </button>
       </div>
-      <p class="card-desc">${desc}</p>
+      <p class="card-desc">${mark(item.d)}</p>
+      ${theoryHTML}
+      ${termsHTML}
       <div class="code-wrap">
         <button class="copy-btn" data-copy type="button" aria-label="Скопировать код">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           <span>Copy</span>
         </button>
-        <pre><code>${code}</code></pre>
+        <pre><code>${escapeHtml(item.code)}</code></pre>
       </div>
     </article>`;
 }
@@ -262,38 +237,9 @@ function selectFilter(id) {
   }
 }
 
-function setOS(os) {
-  state.os = os;
-  store.set("pycheat:os", os);
-  updateOSUI();
-  render();
-}
-
-function updateOSUI() {
-  $$("#osFilters .chip").forEach(chip => {
-    const active = chip.dataset.os === state.os;
-    chip.classList.toggle("active", active);
-    chip.setAttribute("aria-pressed", String(active));
-  });
-
-  const myChip = $("#myOsChip");
-  myChip.textContent = state.detectedOS ? `Моя ОС · ${state.detectedOS}` : "Моя ОС";
-
-  const os = activeOS();
-  const hint = os === "all"
-    ? "Без фильтра"
-    : `Универсальные + ${os}`;
-  $("#osHint").textContent = hint;
-
-  const keyLabel = isMac ? "⌘K" : "Ctrl+K";
-  $("#shortcut").textContent = keyLabel;
-  $("#footerShortcut").textContent = keyLabel;
-}
-
 function resetFilters() {
   state.query = "";
   $("#search").value = "";
-  setOS("all");
   selectFilter("all");
   showToast("Фильтры сброшены");
 }
@@ -361,11 +307,10 @@ function copyCode(btn) {
 /* ---------- Экспорт ---------- */
 
 function exportMarkdown() {
-  const os = activeOS();
   const parts = [
     "# Python Шпаргалка",
     "",
-    `> Фильтр ОС: ${os === "all" ? "все" : os} · сгенерировано ${new Date().toLocaleDateString("ru-RU")}`,
+    `> Сгенерировано ${new Date().toLocaleDateString("ru-RU")}`,
     ""
   ];
 
@@ -379,7 +324,12 @@ function exportMarkdown() {
     items.forEach(item => {
       parts.push(`### ${item.t}`, "");
       if (item.d) parts.push(item.d, "");
-      if (item.os && item.os.length) parts.push(`ОС: ${item.os.join(", ")}`, "");
+      if (item.theory) parts.push("**Теория.** " + item.theory, "");
+      if (Array.isArray(item.terms) && item.terms.length) {
+        parts.push("**Термины**", "");
+        item.terms.forEach(t => parts.push(`- ${t.term} — ${t.def}`));
+        parts.push("");
+      }
       parts.push("````python", item.code, "````", "");
     });
   });
@@ -392,9 +342,8 @@ function exportMarkdown() {
   const blob = new Blob([parts.join("\n")], { type: "text/markdown;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  const slug = os === "all" ? "all" : os.toLowerCase();
   a.href = url;
-  a.download = `python-cheatsheet-${slug}.md`;
+  a.download = "python-cheatsheet.md";
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -467,11 +416,6 @@ function bindEvents() {
   $("#footerExport").addEventListener("click", exportMarkdown);
   $("#emptyReset").addEventListener("click", resetFilters);
 
-  $("#osFilters").addEventListener("click", e => {
-    const chip = e.target.closest(".chip");
-    if (chip) setOS(chip.dataset.os);
-  });
-
   $$('.sidebar .nav-item[data-filter="all"], .sidebar .nav-item[data-filter="fav"]')
     .forEach(btn => btn.addEventListener("click", () => selectFilter(btn.dataset.filter)));
 
@@ -490,6 +434,5 @@ function bindEvents() {
 
 buildSidebar();
 applyTheme();
-updateOSUI();
 bindEvents();
 render();
