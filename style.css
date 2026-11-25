@@ -12,6 +12,8 @@
   --text-2: #6e6e73;
   --accent: #0071e3;
   --accent-soft: rgba(0, 113, 227, 0.1);
+  --simple: #2f8f46;
+  --simple-soft: rgba(47, 143, 70, 0.1);
   --star: #f7b500;
 
   --code-bg: #101014;
@@ -35,6 +37,8 @@ html[data-theme="dark"] {
   --text-2: #a1a1a6;
   --accent: #0a84ff;
   --accent-soft: rgba(10, 132, 255, 0.16);
+  --simple: #30d158;
+  --simple-soft: rgba(48, 209, 88, 0.14);
   --star: #ffd60a;
 
   --code-bg: #0c0c0e;
@@ -331,6 +335,7 @@ html[data-theme="dark"] .icon-sun { display: none; }
   color: var(--text-2);
 }
 
+.card-simple,
 .card-theory,
 .card-terms {
   margin: 0 14px 12px;
@@ -339,6 +344,11 @@ html[data-theme="dark"] .icon-sun { display: none; }
   background: var(--bg);
   border: 1px solid var(--card-border);
 }
+.card-simple {
+  border-left: 3px solid var(--simple);
+  background: var(--simple-soft);
+}
+.card-simple h4,
 .card-theory h4,
 .card-terms h4 {
   font-size: 10.5px;
@@ -348,6 +358,8 @@ html[data-theme="dark"] .icon-sun { display: none; }
   color: var(--accent);
   margin-bottom: 5px;
 }
+.card-simple h4 { color: var(--simple); }
+.card-simple p,
 .card-theory p {
   font-size: 12.2px;
   line-height: 1.5;
@@ -554,6 +566,7 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2
   .card { border-radius: 12px; }
   .card-head { padding: 11px 12px 4px; }
   .card-desc { padding: 0 12px 10px; }
+  .card-simple,
   .card-theory,
   .card-terms { margin-left: 12px; margin-right: 12px; }
 
@@ -618,14 +631,15 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2
     page-break-inside: avoid;
   }
   .card-head, .card-desc { padding-left: 10px; padding-right: 10px; }
-  .card-theory, .card-terms {
+  .card-simple, .card-theory, .card-terms {
     margin-left: 10px;
     margin-right: 10px;
     padding: 7px 9px;
     background: #f6f6f8;
     border-color: #ddd;
   }
-  .card-theory p, .term-row dt, .term-row dd { color: #222; }
+  .card-simple { border-left-color: #888; }
+  .card-simple p, .card-theory p, .term-row dt, .term-row dd { color: #222; }
   .term-row dd { border-left-color: #ccc; }
   .code-wrap { background: #f6f6f8 !important; border-top: 1px solid #ddd; }
   pre {

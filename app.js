@@ -77,6 +77,7 @@ function matchQuery(item, cat, q) {
   const hay = [
     item.t,
     item.d || "",
+    item.simple || "",
     item.theory || "",
     terms,
     item.code,
@@ -149,6 +150,10 @@ function cardHTML(item, cat, q) {
   const fav = state.favs.has(key);
   const mark = (s) => q ? highlight(escapeHtml(s || ""), q) : escapeHtml(s || "");
 
+  const simpleHTML = item.simple
+    ? `<section class="card-simple"><h4>Простыми словами</h4><p>${mark(item.simple)}</p></section>`
+    : "";
+
   const theoryHTML = item.theory
     ? `<section class="card-theory"><h4>Теория</h4><p>${mark(item.theory)}</p></section>`
     : "";
@@ -175,6 +180,7 @@ function cardHTML(item, cat, q) {
         </button>
       </div>
       <p class="card-desc">${mark(item.d)}</p>
+      ${simpleHTML}
       ${theoryHTML}
       ${termsHTML}
       <div class="code-wrap">
@@ -324,6 +330,7 @@ function exportMarkdown() {
     items.forEach(item => {
       parts.push(`### ${item.t}`, "");
       if (item.d) parts.push(item.d, "");
+      if (item.simple) parts.push("**Простыми словами.** " + item.simple, "");
       if (item.theory) parts.push("**Теория.** " + item.theory, "");
       if (Array.isArray(item.terms) && item.terms.length) {
         parts.push("**Термины**", "");
